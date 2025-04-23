@@ -13,17 +13,6 @@ if [[ "$(uname)" != "Darwin" ]]; then
     exit 1
 fi
 
-# 检查用户权限
-if ! sudo -n true 2>/dev/null; then
-    echo "${RED}错误: 此脚本需要管理员权限${NC}"
-    echo "请确保当前用户具有管理员权限，可以通过以下方式检查："
-    echo "1. 打开系统偏好设置"
-    echo "2. 点击用户与群组"
-    echo "3. 点击左下角的锁图标并输入密码"
-    echo "4. 检查当前用户是否在管理员组中"
-    echo "如果当前用户不是管理员，请使用管理员账户运行此脚本"
-    exit 1
-fi
 
 CHIP_TYPE=$(uname -m)
 echo "检测到芯片类型: $CHIP_TYPE"
@@ -48,7 +37,7 @@ export CI=1
 # 检查并安装 Homebrew (自动模式)
 if ! command -v brew &> /dev/null; then
     echo "正在安装 Homebrew..."
-    NONINTERACTIVE=1 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+    NONINTERACTIVE=1 sudo /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
     
     # 检查安装是否成功
     if [ $? -ne 0 ]; then
