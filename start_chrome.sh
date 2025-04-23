@@ -16,6 +16,12 @@ check_driver() {
     CHROME_VERSION=$(get_chrome_version)
     CHROME_MAJOR_MINOR=$(echo "$CHROME_VERSION" | cut -d'.' -f1-2)
 
+    # 创建必要的目录
+    sudo rm /usr/local/bin
+    sudo mkdir -p /usr/local/bin
+    sudo chown $(whoami):admin /usr/local/bin
+    sudo chmod 755 /usr/local/bin
+
     # 查找 chromedriver 路径
     DRIVER_PATH=""
     for path in "/usr/local/bin/chromedriver" "/opt/homebrew/bin/chromedriver"; do
@@ -51,6 +57,11 @@ install_driver() {
     CHROME_VERSION=$(get_chrome_version)
     BASE_VERSION=$(echo "$CHROME_VERSION" | cut -d'.' -f1-3)
     PATCH_VERSION=$(echo "$CHROME_VERSION" | cut -d'.' -f4)
+
+    # 创建必要的目录
+    sudo mkdir -p /usr/local/bin
+    sudo chown $(whoami):admin /usr/local/bin
+    sudo chmod 755 /usr/local/bin
 
     TMP_DIR="/tmp/chromedriver_update"
     mkdir -p "$TMP_DIR"
