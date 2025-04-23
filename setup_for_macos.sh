@@ -13,7 +13,6 @@ if [[ "$(uname)" != "Darwin" ]]; then
     exit 1
 fi
 
-
 CHIP_TYPE=$(uname -m)
 echo "检测到芯片类型: $CHIP_TYPE"
 
@@ -28,41 +27,21 @@ fi
 export HOMEBREW_NO_AUTO_UPDATE=1
 export NONINTERACTIVE=1
 export CI=1
-
+# 在 HOSTS 文件中添加 github.com 和 raw.githubusercontent.com 的记录
+#echo "185.199.108.153 raw.githubusercontent.com" | sudo tee -a /etc/hosts
+#echo "185.199.109.153 raw.githubusercontent.com" | sudo tee -a /etc/hosts
+#echo "185.199.110.153 raw.githubusercontent.com" | sudo tee -a /etc/hosts
+#echo "185.199.111.153 raw.githubusercontent.com" | sudo tee -a /etc/hosts
 
 # 检查并安装 Homebrew (自动模式)
 if ! command -v brew &> /dev/null; then
     echo "正在安装 Homebrew..."
-    curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh -o install_brew.sh
-    if [ $? -ne 0 ]; then
-        echo "${RED}无法下载 Homebrew 安装脚本，可能是网络问题${NC}"
-        exit 1
-    fi
-    echo "开始执行 Homebrew 安装..."
-    NONINTERACTIVE=1 /bin/bash install_brew.sh 
-     
-    # 检查安装是否成功
-    if [ $? -ne 0 ]; then
-        echo "${RED}Homebrew 安装失败，程序终止${NC}"
-        exit 1
-    fi
+    NONINTERACTIVE=1 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
     
     if [[ "$CHIP_TYPE" == "arm64" ]]; then
         echo 'eval "$(/opt/homebrew/bin/brew shellenv)"' >> ~/.zshrc
         eval "$(/opt/homebrew/bin/brew shellenv)"
-        
-        # 再次验证 brew 命令是否可用
-        if ! command -v brew &> /dev/null; then
-            echo "${RED}Homebrew 环境变量配置失败，程序终止${NC}"
-            exit 1
-        fi
     fi
-fi
-
-# 验证 Homebrew 是否正常工作
-if ! brew --version &> /dev/null; then
-    echo "${RED}Homebrew 安装不完整，程序终止${NC}"
-    exit 1
 fi
 
 # 更新 Homebrew
