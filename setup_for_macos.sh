@@ -38,10 +38,28 @@ if ! command -v brew &> /dev/null; then
     echo "正在安装 Homebrew..."
     NONINTERACTIVE=1 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
     
+    # 检查安装是否成功
+    if [ $? -ne 0 ]; then
+        echo "${RED}Homebrew 安装失败，程序终止${NC}"
+        exit 1
+    fi
+    
     if [[ "$CHIP_TYPE" == "arm64" ]]; then
         echo 'eval "$(/opt/homebrew/bin/brew shellenv)"' >> ~/.zshrc
         eval "$(/opt/homebrew/bin/brew shellenv)"
+        
+        # 再次验证 brew 命令是否可用
+        if ! command -v brew &> /dev/null; then
+            echo "${RED}Homebrew 环境变量配置失败，程序终止${NC}"
+            exit 1
+        fi
     fi
+fi
+
+# 验证 Homebrew 是否正常工作
+if ! brew --version &> /dev/null; then
+    echo "${RED}Homebrew 安装不完整，程序终止${NC}"
+    exit 1
 fi
 
 # 更新 Homebrew
